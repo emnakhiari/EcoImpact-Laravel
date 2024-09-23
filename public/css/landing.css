@@ -1,0 +1,163 @@
+body{
+    padding-top: 130px;
+}
+.nav-content{
+    margin-left: 8%;
+    margin-right: 8%;
+}
+
+.navbar.scrolled {
+    background-color: white; 
+}
+
+.nav-link{
+    font-size: 20px;
+}
+
+.nav-link:hover{
+    color: #FB503B;
+    font-weight: bold;
+}
+
+.navbar-brand img{
+    height: 80px;
+}
+
+.text-btn{
+    font-size: 18px;
+    color: #FB503B;
+}
+
+.text-btncontact{
+    font-size: 18px;
+}
+
+
+
+.btn:hover .text-btn {
+    color: white; 
+}
+
+.container {
+   text-align: center;
+   margin-top: 50px;
+}
+
+
+.text h2 {
+    margin-bottom: 10px;
+    font-size: 50px;
+}
+
+.text p {
+    font-size: 20px;
+    line-height: 1.6;
+    margin-top: 20px;
+}
+
+
+#navbar-search-main{
+    margin-top: 25px;
+    width: 50%;
+    margin-left: 25%;
+}
+
+#topbarInputIconLeft{
+    padding: 3%;
+}
+
+
+.aboutus{
+    margin-top: 100px;
+}
+
+
+.about-contact{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2%;
+}
+
+.about-contact h1{
+    font-size: 50px;
+}
+
+.services{
+    margin-top: 50px;
+}
+
+.title-services{
+    margin-left: 4%;
+    margin-bottom: 4% ;
+    font-size: 50px;
+    color:#FB503B;
+}
+
+
+.card-content{
+  display: flex;
+  justify-content: space-around;
+}
+
+.contactus{
+    margin-top: 50px;
+}
+
+
+
+.content-contact{
+    display: flex;
+    justify-content: space-around;
+    padding: 2%;
+    width: 100%;
+}
+
+
+@media (max-width: 978px) {
+
+    .content-contact{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .img-contact{
+        width: 400px;
+        height: 300px;
+    }
+    .about-contact{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .about-contact h1{
+        text-align: center;
+    }
+
+    .about-contact p{
+        text-align: center;
+    }
+
+    .img-about{
+        width: 400px;
+        height: 300px;
+    }
+    
+
+   
+}
+
+@media (max-width: 750px) {
+    .card-content{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+
+    .card{
+        margin-top: 2%;
+    }
+}
