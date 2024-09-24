@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SensibilisatioCompagneController;
+
 
 
 
@@ -28,3 +30,9 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashb
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/forgotPassword', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
+
+
+//module compagne de sensibilisation
+Route::get('/compagneList', [SensibilisatioCompagneController::class, 'index'])->name('campaigns.index');
+Route::post('/compagneCreate', [SensibilisatioCompagneController::class, 'store'])->name('campaigns.store');
+
