@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChallengeController;
 
 
 
@@ -28,3 +29,9 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashb
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/forgotPassword', [AuthController::class, 'forgotPassword'])->name('forgotPassword');
+
+Route::resource('challenges', ChallengeController::class);
+
+//Route::get('/challengesfront', [ChallengeController::class, 'indexfront'])->name('challenges.index');
+
+
