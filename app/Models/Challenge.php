@@ -16,4 +16,8 @@ class Challenge extends Model
         'reward_points',
         'image',
     ];
+    public function solutions()
+{
+    return $this->hasMany(Solution::class);
+}
 }

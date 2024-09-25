@@ -18,6 +18,9 @@
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $challenge->id }}">
                 <i class="fas fa-trash"></i> 
             </button>
+            <a href="{{ route('challenges.show', $challenge->id) }}" class="btn btn-success">
+                <i class="fas fa-list"></i> 
+            </a>
             <div class="modal fade" id="deleteModal{{ $challenge->id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ $challenge->id }}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">

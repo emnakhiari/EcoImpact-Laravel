@@ -5,6 +5,9 @@
     <div class="py-4">
         <h1 class="h4">Edit Challenge</h1>
         <p class="mb-0">Update the details below to modify the challenge.</p>
+        <div class="button-group">
+            <a href="{{ route('challenges.index') }}" class="btn btn-secondary back-btn">Back to Challenges</a>
+        </div>
     </div>
 
     <form action="{{ route('challenges.update', $challenge->id) }}" method="POST"  enctype="multipart/form-data" novalidate>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\Challenge;
+use App\Models\Solution;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PDF;
@@ -58,8 +60,20 @@ class ChallengeController extends Controller
 
     public function show($id)
     {
-        $challenge = Challenge::findOrFail($id);
-        return view('Back.Challenges.show', compact('challenge'));
+        $challenge = Challenge::find($id);
+            $currentDate = Carbon::now();
+                $endDate = Carbon::parse($challenge->end_date);
+                $solutions = Solution::where('challenge_id', $challenge->id)->with('user')->get(); // Fetch solutions with user info
+
+        if ($currentDate->lt($endDate)) {
+            $timeLeft = $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]);
+        } else {
+            $timeLeft = 'Closed';
+        }
+        
+            return view('Back.Challenges.show', compact('challenge', 'solutions', 'timeLeft'));
+
+
     }
 
     public function edit($id)
@@ -155,21 +169,17 @@ class ChallengeController extends Controller
         public function showfront($id)
     {
         $challenge = Challenge::find($id);
-    
-        // Get the current date
-        $currentDate = Carbon::now();
-        
-        // Get the end date of the challenge
-        $endDate = Carbon::parse($challenge->end_date);
-        
-        // Calculate the time left
+            $currentDate = Carbon::now();
+                $endDate = Carbon::parse($challenge->end_date);
+                $solutions = Solution::where('challenge_id', $challenge->id)->with('user')->get(); // Fetch solutions with user info
+
         if ($currentDate->lt($endDate)) {
             $timeLeft = $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]);
         } else {
-            $timeLeft = 'Closed'; // If the current date is past the end date
+            $timeLeft = 'Closed';
         }
         
-            return view('Front.Challenges.show', compact('challenge', 'timeLeft'));
+            return view('Front.Challenges.show', compact('challenge', 'solutions', 'timeLeft'));
     }
     
 
