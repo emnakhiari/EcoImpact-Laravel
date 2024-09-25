@@ -1,0 +1,98 @@
+/* public/css/challenge.css */
+.challenge-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.challenge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.challenge-content {
+    display: flex;
+    align-items: flex-start; /* Ensure content aligns at the top */
+    gap: 50px; /* Controls the space between image and details */
+    margin-bottom: 20px;
+    justify-content: center
+}
+
+
+.challenge-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover; /* Ensures the image scales and crops correctly */
+    border-radius: 5px; /* Optional: adjusts the image corners */
+}
+
+.challenge-details {
+    max-width: 55%; /* Adjust to ensure a balanced layout */
+}
+
+.challenge-details p {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+.solution-list {
+    margin-top: 30px;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.back-btn {
+    padding: 10px 20px;
+}
+
+.add-solution-btn {
+    padding: 10px 20px;
+}
+.image-frame {
+    width: 300px; /* Adjust to your preferred size */
+    height: 300px;
+    border: 2px solid #ddd; /* Creates the frame */
+    padding: 5px; /* Optional: space between the image and frame */
+    border-radius: 8px; /* Optional: rounded corners */
+    overflow: hidden; /* Ensures the image doesn't overflow the frame */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff; /* Background color inside the frame */
+}
+.image-framecard {
+    width: 100%; /* Full width to match the card */
+    height: 200px; /* Fixed height for uniformity */
+    border-bottom: 2px solid #ddd;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa; /* Light background to make images stand out */
+}
+.icon {
+    width: 20px; /* Adjust size as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 5px; /* Space between icon and text */
+}
+.float-right {
+    float: right;
+}

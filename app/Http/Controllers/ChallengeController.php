@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 use App\Models\Challenge;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use PDF;
+
+
 class ChallengeController extends Controller
 {
     public function index(Request $request)
@@ -23,12 +26,8 @@ class ChallengeController extends Controller
     
     
 
-  /*  public function indexfront()
-    {
-        $challenges = Challenge::all();
-        return view('Front.Challenges.index', compact('challengesfront')); // Use the correct path for the view
-    }
-    */
+   
+
    
     public function create()
     {
@@ -114,4 +113,55 @@ class ChallengeController extends Controller
         $challenge->delete();
         return redirect()->route('challenges.index')->with('success', 'Challenge deleted successfully');
     }
+
+    public function exportPdf()
+    {
+        $challenges = Challenge::all();
+        $pdf = PDF::loadView('Back.Challenges.pdf', compact('challenges'));
+    
+        return $pdf->download('challenges.pdf');
+    }
+    
+   
+
+
+
+
+
+
+
+
+    public function indexfront(Request $request)
+    {
+        $search = $request->input('search');
+    
+        // Fetch challenges based on the search query
+        $challenges = Challenge::when($search, function ($query) use ($search) {
+            return $query->where('title', 'LIKE', '%' . $search . '%')
+                         ->orWhere('description', 'LIKE', '%' . $search . '%');
+        })->paginate(6); // Adjust the pagination as needed
+    
+        return view('front.challenges.index', compact('challenges', 'search'));    }
+    public function showfront($id)
+    {
+        $challenge = Challenge::find($id);
+    
+        // Get the current date
+        $currentDate = Carbon::now();
+        
+        // Get the end date of the challenge
+        $endDate = Carbon::parse($challenge->end_date);
+        
+        // Calculate the time left
+        if ($currentDate->lt($endDate)) {
+            $timeLeft = $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]);
+        } else {
+            $timeLeft = 'Closed'; // If the current date is past the end date
+        }
+        
+            return view('Front.Challenges.show', compact('challenge', 'timeLeft'));
+    }
+    
+
+
 }

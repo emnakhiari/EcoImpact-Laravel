@@ -32,6 +32,8 @@ Route::get('/forgotPassword', [AuthController::class, 'forgotPassword'])->name('
 
 Route::resource('challenges', ChallengeController::class);
 
-//Route::get('/challengesfront', [ChallengeController::class, 'indexfront'])->name('challenges.index');
+Route::get('/challengesfront', [ChallengeController::class, 'indexfront'])->name('challenges.indexfront');
+Route::get('/challengesfront/{id}', [ChallengeController::class, 'showfront'])->name('challenges.showfront');
+Route::get('challenges/export/pdf', [ChallengeController::class, 'exportPdf'])->name('challenges.export.pdf');
 
 
