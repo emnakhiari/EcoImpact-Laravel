@@ -133,16 +133,26 @@ class ChallengeController extends Controller
 
     public function indexfront(Request $request)
     {
-        $search = $request->input('search');
+       
+        $search = $request->get('search', '');
+        $challenges = Challenge::where('title', 'like', '%' . $search . '%')
+            ->orWhere('description', 'like', '%' . $search . '%')
+            ->paginate(10);
     
-        // Fetch challenges based on the search query
-        $challenges = Challenge::when($search, function ($query) use ($search) {
-            return $query->where('title', 'LIKE', '%' . $search . '%')
-                         ->orWhere('description', 'LIKE', '%' . $search . '%');
-        })->paginate(6); // Adjust the pagination as needed
+            if ($request->ajax()) {
+                return view('Front.Challenges.challenges_list', compact('challenges'));
+            }
+            
     
-        return view('front.challenges.index', compact('challenges', 'search'));    }
-    public function showfront($id)
+        return view('Front.Challenges.index', compact('challenges', 'search'));
+
+   
+    }
+    
+   
+   
+   
+        public function showfront($id)
     {
         $challenge = Challenge::find($id);
     

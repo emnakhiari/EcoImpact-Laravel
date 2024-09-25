@@ -149,7 +149,9 @@
             aria-expanded="false">
             <div class="media d-flex align-items-center">
               <img class="avatar rounded-circle" alt="Image placeholder" src="/assets/img/team/profile-picture-1.jpg">
-              <span style="color:black;font-size:15px;margin-left:10px;">Admin User</span>
+              <span style="color:black;font-size:15px;margin-left:10px;">
+        {{ Auth::check() ? Auth::user()->name : '' }} <!-- Display the user's name or 'Guest' -->
+          </span>
 
             </div>
 
@@ -166,13 +168,27 @@
             </a>
           
             <div role="separator" class="dropdown-divider my-1"></div>
-            <a class="dropdown-item d-flex align-items-center" href="/profile">
-            <svg class="dropdown-icon text-danger me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-              Log out
-            </a>
+            <a class="dropdown-item d-flex align-items-center" href="#" id="logout-link">
+    <svg class="dropdown-icon text-danger me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+    Log out
+</a>
+
+<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+
+<script>
+    document.getElementById('logout-link').addEventListener('click', function (event) {
+        event.preventDefault(); // Prevent the default anchor click behavior
+        document.getElementById('logout-form').submit(); // Submit the form
+    });
+</script>
+
           </div>
         </li>
       </ul>
     </div>
   </div>
 </nav>
+
+

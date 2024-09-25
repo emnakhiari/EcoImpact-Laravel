@@ -1,4 +1,5 @@
 @extends('front.layout')
+<title>EcoImpact - Challenges</title>
 
 @section('content')
 <div class="challenge-container">

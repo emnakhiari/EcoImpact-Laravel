@@ -1,4 +1,5 @@
 @extends('back.layout')
+<title>EcoImpact - Challenges</title>
 
 @section('content')
     <div class="py-4">

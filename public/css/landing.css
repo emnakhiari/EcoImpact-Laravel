@@ -161,3 +161,7 @@ body{
         margin-top: 2%;
     }
 }
+
+.nav-item {
+    list-style: none; /* Remove the bullet point */
+}
