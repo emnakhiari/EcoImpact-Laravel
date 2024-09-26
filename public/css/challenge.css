@@ -1,4 +1,3 @@
-/* public/css/challenge.css */
 .challenge-container {
     margin: 20px;
     padding: 20px;
@@ -16,8 +15,8 @@
 
 .challenge-content {
     display: flex;
-    align-items: flex-start; /* Ensure content aligns at the top */
-    gap: 50px; /* Controls the space between image and details */
+    align-items: flex-start; 
+    gap: 50px; 
     margin-bottom: 20px;
     justify-content: center
 }
@@ -26,12 +25,12 @@
 .challenge-image {
     max-width: 100%;
     max-height: 100%;
-    object-fit: cover; /* Ensures the image scales and crops correctly */
-    border-radius: 5px; /* Optional: adjusts the image corners */
+    object-fit: cover; 
+    border-radius: 5px; 
 }
 
 .challenge-details {
-    max-width: 55%; /* Adjust to ensure a balanced layout */
+    max-width: 55%;
 }
 
 .challenge-details p {
@@ -67,31 +66,31 @@
     padding: 10px 20px;
 }
 .image-frame {
-    width: 300px; /* Adjust to your preferred size */
+    width: 300px; 
     height: 300px;
-    border: 2px solid #ddd; /* Creates the frame */
-    padding: 5px; /* Optional: space between the image and frame */
-    border-radius: 8px; /* Optional: rounded corners */
-    overflow: hidden; /* Ensures the image doesn't overflow the frame */
+    border: 2px solid #ddd; 
+    padding: 5px; 
+    border-radius: 8px; 
+    overflow: hidden; 
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #fff; /* Background color inside the frame */
+    background-color: #fff; 
 }
 .image-framecard {
-    width: 100%; /* Full width to match the card */
-    height: 200px; /* Fixed height for uniformity */
+    width: 100%; 
+    height: 200px;
     border-bottom: 2px solid #ddd;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f8f9fa; /* Light background to make images stand out */
+    background-color: #f8f9fa; 
 }
 .icon {
-    width: 20px; /* Adjust size as needed */
-    height: auto; /* Maintain aspect ratio */
-    margin-right: 5px; /* Space between icon and text */
+    width: 20px; 
+    height: auto; 
+    margin-right: 5px; 
 }
 .float-right {
     float: right;

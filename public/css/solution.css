@@ -98,3 +98,43 @@
     border-radius: 4px;
     border: 1px solid #ccc;
 }
+.winner-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.podium-position {
+    position: relative;
+    width: 100px;
+    height: 150px;
+    margin: 0 10px;
+    background-color: #f8c740; /* Gold color for podium */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.trophy-icon {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    color: #f39c12; /* Trophy color */
+}
+
+.winner-info {
+    padding: 20px;
+}
+
+.winner-info strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 5px;
+}

@@ -10,8 +10,9 @@
         <h1>{{ $challenge->title }}</h1>
         <div class="button-group">
             <a href="{{ route('challenges.indexfront') }}" class="btn btn-secondary back-btn">Back to Challenges</a>
-            <a href="#" class="btn btn-primary add-solution-btn" data-bs-toggle="modal" data-bs-target="#addSolutionModal">Add Solution</a>
-        </div>
+            @if (!$challenge->isClosed())
+                <a href="#" class="btn btn-primary add-solution-btn" data-bs-toggle="modal" data-bs-target="#addSolutionModal">Add Solution</a>
+            @endif        </div>
     </div>
 
     <div class="challenge-content">
@@ -31,6 +32,32 @@
 
     <div class="solution-list">
         <h3>Solutions</h3>
+        @if ($isClosed && $winningSolutions->count())
+<div class="winner-container">
+    <div class="podium">
+        @foreach ($winningSolutions as $solution)
+            <div class="podium-position">
+                <i class="fas fa-trophy trophy-icon"></i>
+                <div class="winner-info">
+                    <strong>{{ $solution->user->name }}</strong>
+                    <p>{{ $solution->title }}</p>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    <div class="alert alert-success">
+       Gongratulations to the winner(s) :
+        @foreach ($winningSolutions as $solution)
+            <strong>{{ $solution->title }}</strong> by <strong>{{ $solution->user->name }}</strong>@if (!$loop->last), @endif
+        @endforeach
+    </div>
+</div>
+@endif
+
+
+
+
+
         <div class="solution-filter-container">
         <div class="solution-filter">
             <label for="solutionSort">Sort Solutions By:</label>
@@ -71,13 +98,19 @@
         @endif
      
     </div>
-  
     <div class="vote-section">
-    <button class="vote-btn {{ $solution->voted ? 'voted' : '' }}" onclick="voteSolution({{ $solution->id }})" data-solution-id="{{ $solution->id }}">
-        <i class="fa fa-star"></i>
-    </button>
-    <span id="vote-count-{{ $solution->id }}">{{ $solution->votes()->count() }}</span> <!-- Display vote count -->
-</div>
+        <!-- Conditionally render the vote button based on challenge status -->
+        @if (!$challenge->isClosed())
+            <button class="vote-btn {{ $solution->voted ? 'voted' : '' }}" onclick="voteSolution({{ $solution->id }})" data-solution-id="{{ $solution->id }}">
+                <i class="fa fa-star"></i>
+            </button>
+        @else
+            <button class="vote-btn" disabled>
+                <i class="fa fa-star"></i>
+            </button>
+        @endif
+        <span id="vote-count-{{ $solution->id }}">{{ $solution->votes()->count() }}</span> <!-- Display vote count -->
+    </div>
 
 
     <div class="solution-content">

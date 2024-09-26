@@ -28,6 +28,37 @@
 
     <div class="solution-list">
         <h3>Solutions</h3>
+        @if ($isClosed && $winningSolutions->count())
+<div class="winner-container">
+    <div class="podium">
+        @foreach ($winningSolutions as $solution)
+            <div class="podium-position">
+                <i class="fas fa-trophy trophy-icon"></i>
+                <div class="winner-info">
+                    <strong>{{ $solution->user->name }}</strong>
+                    <p>{{ $solution->title }}</p>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    <div class="alert alert-success">
+       Gongratulations to the winner(s) :
+        @foreach ($winningSolutions as $solution)
+            <strong>{{ $solution->title }}</strong> by <strong>{{ $solution->user->name }}</strong>@if (!$loop->last), @endif
+        @endforeach
+    </div>
+</div>
+@endif
+
+        <div class="solution-filter-container">
+        <div class="solution-filter">
+            <label for="solutionSort">Sort Solutions By:</label>
+            <select id="solutionSort" onchange="sortSolutions()">
+                <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Latest</option>
+                <option value="votes" {{ request('sort') === 'votes' ? 'selected' : '' }}>Votes</option>
+            </select>
+        </div>
+    </div>
         @foreach($solutions as $solution)
         <div class="solution-item">
     <div class="solution-header">
@@ -57,10 +88,12 @@
      
     </div>
     <div class="vote-section">
-    <button class="vote-btn" onclick="voteSolution({{ $solution->id }})">
-        <i class="fa fa-star"></i> Vote
+    <button class="vote-btn {{ $solution->voted ? 'voted' : '' }}" onclick="voteSolution({{ $solution->id }})" data-solution-id="{{ $solution->id }}">
+        <i class="fa fa-star"></i>
     </button>
+    <span id="vote-count-{{ $solution->id }}">{{ $solution->votes()->count() }}</span> <!-- Display vote count -->
 </div>
+
     <div class="solution-content">
         <h5 id="solution-title-{{ $solution->id }}">{{ $solution->title }}</h5>
         <p id="solution-description-{{ $solution->id }}">{{ $solution->description }}</p>
@@ -206,6 +239,43 @@ function showAlert(message, type) {
             alertNode.addEventListener('transitionend', () => alertNode.remove());
         }
     }, 3000); // Automatically close after 3 seconds
+}
+function voteSolution(solutionId) {
+    fetch(`/solutions/${solutionId}/vote`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const voteButton = document.querySelector(`.vote-btn[data-solution-id="${solutionId}"]`);
+        const voteCountSpan = document.querySelector(`#vote-count-${solutionId}`); // Ensure you have this span for displaying the count
+
+        // Update button style and vote count
+        voteButton.classList.toggle('voted'); // Add a class for styling (e.g., yellow color)
+        voteCountSpan.textContent = data.voteCount; // Update vote count
+
+        showAlert(data.message, 'success'); // Assuming you have a showAlert function
+    })
+    .catch(error => {
+        console.error('Error voting for the solution:', error);
+    });
+}
+
+
+function sortSolutions() {
+    const sortValue = document.getElementById('solutionSort').value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', sortValue);
+    window.location.href = url.toString(); 
 }
 </script>
 @endsection

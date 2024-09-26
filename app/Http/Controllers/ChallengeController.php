@@ -61,18 +61,46 @@ class ChallengeController extends Controller
     public function show($id)
     {
         $challenge = Challenge::find($id);
-            $currentDate = Carbon::now();
-                $endDate = Carbon::parse($challenge->end_date);
-                $solutions = Solution::where('challenge_id', $challenge->id)->with('user')->get(); // Fetch solutions with user info
-
-        if ($currentDate->lt($endDate)) {
-            $timeLeft = $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]);
+        $currentDate = Carbon::now();
+        $endDate = Carbon::parse($challenge->end_date);
+    
+        $sort = request('sort', 'latest');
+    
+        // Fetch all solutions, counting votes regardless of sort order
+        $solutionsQuery = Solution::where('challenge_id', $challenge->id)
+            ->with('user')
+            ->withCount('votes'); // Count votes
+    
+        if ($sort === 'votes') {
+            $solutionsQuery->orderBy('votes_count', 'desc');
         } else {
-            $timeLeft = 'Closed';
+            // Default sorting by latest (created_at)
+            $solutionsQuery->orderBy('created_at', 'desc');
         }
-        
-            return view('Back.Challenges.show', compact('challenge', 'solutions', 'timeLeft'));
-
+    
+        // Execute the query
+        $solutions = $solutionsQuery->get();
+    
+        $userId = auth()->id();
+        foreach ($solutions as $solution) {
+            $solution->voted = $solution->votes()->where('user_id', $userId)->exists();
+        }
+    
+        $timeLeft = $currentDate->lt($endDate) ? 
+            $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]) : 
+            'Closed';
+    
+        $isClosed = $challenge->isClosed();
+    
+        // Get the maximum votes count
+        $maxVotes = $solutions->max('votes_count');
+    
+        // Get all solutions that have the maximum votes
+        $winningSolutions = $solutions->filter(function ($solution) use ($maxVotes) {
+            return $solution->votes_count == $maxVotes;
+        });
+    
+        return view('Back.Challenges.show', compact('challenge', 'solutions', 'timeLeft', 'isClosed', 'winningSolutions'));
 
     }
 
@@ -165,41 +193,52 @@ class ChallengeController extends Controller
     
    
    
-   
     public function showfront($id)
     {
         $challenge = Challenge::find($id);
         $currentDate = Carbon::now();
         $endDate = Carbon::parse($challenge->end_date);
     
-        $sort = request('sort', 'latest'); 
-        
+        $sort = request('sort', 'latest');
+    
+        // Fetch all solutions, counting votes regardless of sort order
+        $solutionsQuery = Solution::where('challenge_id', $challenge->id)
+            ->with('user')
+            ->withCount('votes'); // Count votes
+    
         if ($sort === 'votes') {
-      
-            $solutions = Solution::where('challenge_id', $challenge->id)
-                ->with('user')
-                ->withCount('votes') // Count votes
-                ->orderBy('votes_count', 'desc') 
-                ->get();
+            $solutionsQuery->orderBy('votes_count', 'desc');
         } else {
             // Default sorting by latest (created_at)
-            $solutions = Solution::where('challenge_id', $challenge->id)
-                ->with('user')
-                ->orderBy('created_at', 'desc') 
-                ->get();
+            $solutionsQuery->orderBy('created_at', 'desc');
         }
+    
+        // Execute the query
+        $solutions = $solutionsQuery->get();
+    
         $userId = auth()->id();
         foreach ($solutions as $solution) {
             $solution->voted = $solution->votes()->where('user_id', $userId)->exists();
         }
-        if ($currentDate->lt($endDate)) {
-            $timeLeft = $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]);
-        } else {
-            $timeLeft = 'Closed';
-        }
-        
-        return view('Front.Challenges.show', compact('challenge', 'solutions', 'timeLeft'));
+    
+        $timeLeft = $currentDate->lt($endDate) ? 
+            $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]) : 
+            'Closed';
+    
+        $isClosed = $challenge->isClosed();
+    
+        // Get the maximum votes count
+        $maxVotes = $solutions->max('votes_count');
+    
+        // Get all solutions that have the maximum votes
+        $winningSolutions = $solutions->filter(function ($solution) use ($maxVotes) {
+            return $solution->votes_count == $maxVotes;
+        });
+    
+        return view('Front.Challenges.show', compact('challenge', 'solutions', 'timeLeft', 'isClosed', 'winningSolutions'));
     }
+    
+    
     
 
 
