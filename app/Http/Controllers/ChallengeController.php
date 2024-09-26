@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Challenge;
 use App\Models\Solution;
+use App\Models\User ;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,6 +19,22 @@ class ChallengeController extends Controller
             ->orWhere('description', 'like', '%' . $search . '%')
             ->paginate(10);
     
+            $currentDate = Carbon::now();
+
+            // Update challenge statuses based on end date
+            foreach ($challenges as $challenge) {
+                $endDate = Carbon::parse($challenge->end_date);
+                if ($currentDate->gte($endDate) && $challenge->status !== 'closed') {
+                    $challenge->status = 'closed';
+                    $challenge->save();
+                } elseif ($currentDate->lt($endDate) && $challenge->status === 'closed') {
+                    $challenge->status = 'open';
+                    $challenge->save();
+                }
+            }
+        
+        
+
             if ($request->ajax()) {
                 return view('Back.Challenges.table_rows', compact('challenges'));
             }
@@ -26,11 +43,6 @@ class ChallengeController extends Controller
         return view('Back.Challenges.index', compact('challenges', 'search'));
     }
     
-    
-
-   
-
-   
     public function create()
     {
         return view('Back.Challenges.create');
@@ -166,80 +178,114 @@ class ChallengeController extends Controller
     
    
 
+public function indexfront(Request $request)
+{
+    $search = $request->get('search', '');
+    $challenges = Challenge::where('title', 'like', '%' . $search . '%')
+        ->orWhere('description', 'like', '%' . $search . '%')
+        ->paginate(10);
 
+    $currentDate = Carbon::now();
 
-
-
-
-
-
-    public function indexfront(Request $request)
-    {
-       
-        $search = $request->get('search', '');
-        $challenges = Challenge::where('title', 'like', '%' . $search . '%')
-            ->orWhere('description', 'like', '%' . $search . '%')
-            ->paginate(10);
-    
-            if ($request->ajax()) {
-                return view('Front.Challenges.challenges_list', compact('challenges'));
-            }
-            
-    
-        return view('Front.Challenges.index', compact('challenges', 'search'));
-
-   
-    }
-    
-   
-   
-    public function showfront($id)
-    {
-        $challenge = Challenge::find($id);
-        $currentDate = Carbon::now();
+    // Update challenge statuses based on end date
+    foreach ($challenges as $challenge) {
         $endDate = Carbon::parse($challenge->end_date);
-    
-        $sort = request('sort', 'latest');
-    
-        // Fetch all solutions, counting votes regardless of sort order
-        $solutionsQuery = Solution::where('challenge_id', $challenge->id)
-            ->with('user')
-            ->withCount('votes'); // Count votes
-    
-        if ($sort === 'votes') {
-            $solutionsQuery->orderBy('votes_count', 'desc');
-        } else {
-            // Default sorting by latest (created_at)
-            $solutionsQuery->orderBy('created_at', 'desc');
+        if ($currentDate->gte($endDate) && $challenge->status !== 'closed') {
+            $challenge->status = 'closed';
+            $challenge->save();
+
+            // Find the winning solution, counting votes dynamically
+            $winningSolution = Solution::where('challenge_id', $challenge->id)
+                ->withCount('votes') // Count votes dynamically
+                ->orderBy('votes_count', 'desc')
+                ->first();
+
+            if ($winningSolution) {
+                // Update the winner's score
+                $user = User::find($winningSolution->user_id);
+                if ($user) {
+                    $user->score += $challenge->reward_points;
+                    $user->save();
+                }
+            }
+        } elseif ($currentDate->lt($endDate) && $challenge->status === 'closed') {
+            $challenge->status = 'open';
+            $challenge->save();
         }
-    
-        // Execute the query
-        $solutions = $solutionsQuery->get();
-    
-        $userId = auth()->id();
-        foreach ($solutions as $solution) {
-            $solution->voted = $solution->votes()->where('user_id', $userId)->exists();
-        }
-    
-        $timeLeft = $currentDate->lt($endDate) ? 
-            $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]) : 
-            'Closed';
-    
-        $isClosed = $challenge->isClosed();
-    
-        // Get the maximum votes count
-        $maxVotes = $solutions->max('votes_count');
-    
-        // Get all solutions that have the maximum votes
-        $winningSolutions = $solutions->filter(function ($solution) use ($maxVotes) {
-            return $solution->votes_count == $maxVotes;
-        });
-    
-        return view('Front.Challenges.show', compact('challenge', 'solutions', 'timeLeft', 'isClosed', 'winningSolutions'));
     }
-    
-    
-    
 
+    if ($request->ajax()) {
+        return view('Front.Challenges.challenges_list', compact('challenges'));
+    }
 
+    return view('Front.Challenges.index', compact('challenges', 'search'));
 }
+public function showfront($id)
+{
+    $challenge = Challenge::find($id);
+    $currentDate = Carbon::now();
+    $endDate = Carbon::parse($challenge->end_date);
+    
+    // Determine the sorting preference
+    $sort = request('sort', 'latest');
+    
+    // Fetch all solutions, counting votes regardless of sort order
+    $solutionsQuery = Solution::where('challenge_id', $challenge->id)
+        ->with('user')
+        ->withCount('votes'); // Count votes
+
+    // Apply sorting based on request
+    if ($sort === 'votes') {
+        $solutionsQuery->orderBy('votes_count', 'desc');
+    } else {
+        $solutionsQuery->orderBy('created_at', 'desc'); // Default sorting by latest
+    }
+
+    // Execute the query
+    $solutions = $solutionsQuery->get();
+    
+    // Determine if the current user voted on each solution
+    $userId = auth()->id();
+    foreach ($solutions as $solution) {
+        $solution->voted = $solution->votes()->where('user_id', $userId)->exists();
+    }
+
+    // Determine time left for the challenge
+    $timeLeft = $currentDate->lt($endDate) ? 
+        $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]) : 
+        'Closed';
+
+    // Check if the challenge is closed
+    $isClosed = $challenge->isClosed();
+   
+
+    // Get the maximum votes count to identify winning solutions
+    $maxVotes = $solutions->max('votes_count');
+    $winningSolutions = $solutions->filter(function ($solution) use ($maxVotes) {
+        return $solution->votes_count == $maxVotes;
+    });
+
+    return view('Front.Challenges.show', compact('challenge', 'solutions', 'timeLeft', 'isClosed', 'winningSolutions'));
+}
+
+        public function leaderboard()
+        {
+        
+            $users = User::select('users.id', 'users.name', 'users.email', 'users.score')
+            ->leftJoin('solutions', 'users.id', '=', 'solutions.user_id')
+            ->leftJoin('challenges', 'solutions.challenge_id', '=', 'challenges.id')
+            ->where('users.role', 'user')
+            ->whereNotNull('solutions.is_winner')
+            ->groupBy('users.id', 'users.name', 'users.email', 'users.score')
+            ->selectRaw('SUM(CASE WHEN solutions.is_winner THEN challenges.reward_points ELSE 0 END) AS total_score')
+            ->orderBy('total_score', 'DESC')
+            ->get();
+    
+             
+            
+                return view('Front.Challenges.leaderboard', compact('users'));
+        }
+        
+    
+    
+}    

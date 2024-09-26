@@ -41,14 +41,14 @@
                 <div class="row">
                     <div class="col-lg-6 mb-3">
                         <label for="start_date" class="form-label">Start Date</label>
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ $challenge->start_date }}" required>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ \Carbon\Carbon::parse($challenge->start_date)->format('Y-m-d') }}" required>
                         <div class="invalid-feedback">
                             Please select a start date.
                         </div>
                     </div>
                     <div class="col-lg-6 mb-3">
                         <label for="end_date" class="form-label">End Date</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ $challenge->end_date }}" required>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ \Carbon\Carbon::parse($challenge->end_date)->format('Y-m-d') }}" required>
                         <div class="invalid-feedback">
                             Please select an end date.
                         </div>

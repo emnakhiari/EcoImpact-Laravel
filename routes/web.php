@@ -44,5 +44,6 @@ Route::post('/solutions', [SolutionController::class, 'store'])->name('solutions
 Route::resource('solutions', SolutionController::class)->only(['store', 'edit', 'update', 'destroy']);
 Route::delete('/solutions/{solution}', [SolutionController::class, 'destroy'])->name('solutions.destroy');
 Route::post('/solutions/{solution}/vote', [SolutionController::class, 'voteSolution'])->name('solutions.vote');
+Route::get('/leaderboard', [ChallengeController::class, 'leaderboard'])->name('leaderboard');
 
 

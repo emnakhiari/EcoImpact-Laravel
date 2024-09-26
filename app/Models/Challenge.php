@@ -20,19 +20,22 @@ class Challenge extends Model
         'end_date',
         'reward_points',
         'image',
+        
     ];
     public function solutions()
 {
     return $this->hasMany(Solution::class);
 }
-public function isClosed() {
-    return now()->isAfter($this->end_date);
-}
+
 
 public function winningSolution() {
     return $this->solutions()->withCount('votes')
         ->orderBy('votes_count', 'desc')
         ->first();
+}
+public function isClosed()
+{
+    return $this->status === 'closed';
 }
 
 }
