@@ -166,20 +166,39 @@ class ChallengeController extends Controller
    
    
    
-        public function showfront($id)
+    public function showfront($id)
     {
         $challenge = Challenge::find($id);
-            $currentDate = Carbon::now();
-                $endDate = Carbon::parse($challenge->end_date);
-                $solutions = Solution::where('challenge_id', $challenge->id)->with('user')->get(); // Fetch solutions with user info
-
+        $currentDate = Carbon::now();
+        $endDate = Carbon::parse($challenge->end_date);
+    
+        $sort = request('sort', 'latest'); 
+        
+        if ($sort === 'votes') {
+      
+            $solutions = Solution::where('challenge_id', $challenge->id)
+                ->with('user')
+                ->withCount('votes') // Count votes
+                ->orderBy('votes_count', 'desc') 
+                ->get();
+        } else {
+            // Default sorting by latest (created_at)
+            $solutions = Solution::where('challenge_id', $challenge->id)
+                ->with('user')
+                ->orderBy('created_at', 'desc') 
+                ->get();
+        }
+        $userId = auth()->id();
+        foreach ($solutions as $solution) {
+            $solution->voted = $solution->votes()->where('user_id', $userId)->exists();
+        }
         if ($currentDate->lt($endDate)) {
             $timeLeft = $currentDate->diffForHumans($endDate, ['syntax' => Carbon::DIFF_ABSOLUTE]);
         } else {
             $timeLeft = 'Closed';
         }
         
-            return view('Front.Challenges.show', compact('challenge', 'solutions', 'timeLeft'));
+        return view('Front.Challenges.show', compact('challenge', 'solutions', 'timeLeft'));
     }
     
 

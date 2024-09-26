@@ -15,6 +15,7 @@
     color: #555;
     margin-bottom: 5px; /* Adds space between the header and vote section */
 }
+
 .solution-header .user-info {
     display: flex;
     align-items: center;
@@ -64,9 +65,36 @@
 }
 
 .vote-btn:hover {
-    color: #ffa500; /* Darker yellow on hover */
+    color: #ffa500; 
 }
 
 .vote-btn:focus {
     outline: none;
+}
+.vote-btn.voted {
+    color: #ffa500;
+}
+
+
+.solution-filter-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns the filter to the right */
+    margin-bottom: 1rem; /* Adds some space below the filter */
+}
+
+.solution-filter {
+    display: flex;
+    align-items: center; /* Vertically centers the label and dropdown */
+}
+
+.solution-filter label {
+    margin-right: 0.5rem; /* Space between label and dropdown */
+}
+
+
+/* Optional: Style the select dropdown */
+#solutionSort {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
