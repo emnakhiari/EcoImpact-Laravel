@@ -65,3 +65,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/register', function () {
     return view('auth.register'); // Assurez-vous que cette vue existe
 })->name('register');
+
+Route::get('/carbon-factors/edit/{id}', [ConsommationController::class, 'editFactor'])->name('edit.factor');
+Route::put('/carbon-factors/{id}', [ConsommationController::class, 'updateFactor'])->name('carbon.factors.update');
+
+Route::delete('/carbon-factors/delete/{id}', [ConsommationController::class, 'deleteFactor'])->name('delete.factor');
